@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.moviemagic.data.repository.MoviesRepository
 import com.moviemagic.domain.entities.MovieEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +31,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun loadMovieDetails(movieId: String) {
         viewModelScope.launch {
-            repository.getMovieById(movieId).collect { movie ->
+            repository.getMovieById(movieId).flowOn(Dispatchers.IO).collect { movie ->
                 _viewState.update {
                     it.copy(
                         movieEntity = movie
